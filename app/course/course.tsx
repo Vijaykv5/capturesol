@@ -31,7 +31,7 @@ const CoursePage = ({ user }: Props) => {
     setIsLoading(true);
     setTimeout(() => {
       router.push(`/course/lesson/${lessonId}`);
-    }, 5000);
+    }, 2000);
   };
 
   const learningPoints = [
