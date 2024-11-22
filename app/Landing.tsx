@@ -13,7 +13,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import SignIn from "./SignIn";
-import NavBar from "./components/NavBar";
+import { Navbar } from "./components/NavBar";
+// import { Navbar } from "./components/NavBar";
 
 export default function Component() {
   const marqueeVariants = {
@@ -31,7 +32,7 @@ export default function Component() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+    <div className="min-h-screen bg-black text-white overflow-hidden relative ">
       {/* Gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-teal-900 opacity-50" />
 
@@ -44,8 +45,9 @@ export default function Component() {
 
       {/* Content */}
       <div className="relative z-10">
+        <Navbar />
         {/* Header */}
-        <NavBar />
+        {/* <NavBar /> */}
 
         <main className="container mx-auto px-4 text-center mt-16 sm:mt-28 flex flex-col lg:flex-row">
           <div className="flex-1">
