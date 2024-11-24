@@ -13,7 +13,7 @@ export default function SignIn() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: "http://localhost:3000/course",
         },
       });
       if (error) throw error;
