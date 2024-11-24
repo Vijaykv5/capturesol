@@ -22,7 +22,7 @@ export default function LoadingPage() {
         <motion.h1
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0, duration: 0.5 }}
           className="mt-4 text-2xl font-bold text-white"
         >
           Loading SolanaCodeLab...

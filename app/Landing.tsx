@@ -1,20 +1,7 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import {
-  Code,
-  BookOpen,
-  Rocket,
-  ArrowRight,
-  Megaphone,
-  Hash,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import SignIn from "./SignIn";
 import { Navbar } from "./components/NavBar";
-// import { Navbar } from "./components/NavBar";
 
 export default function Component() {
   const marqueeVariants = {
@@ -27,6 +14,29 @@ export default function Component() {
           duration: 30,
           ease: "linear",
         },
+      },
+    },
+  };
+
+  const leaderboardVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const leaderItemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
       },
     },
   };
@@ -46,8 +56,6 @@ export default function Component() {
       {/* Content */}
       <div className="relative z-10">
         <Navbar />
-        {/* Header */}
-        {/* <NavBar /> */}
 
         <main className="container mx-auto px-4 text-center mt-16 sm:mt-28 flex flex-col lg:flex-row">
           <div className="flex-1">
@@ -75,46 +83,55 @@ export default function Component() {
                 className="flex flex-col sm:flex-row gap-4 justify-center mt-8"
               >
                 <SignIn />
-                <Button
-                  variant="outline"
-                  className="rounded-full px-8 py-6 text-lg w-full sm:w-auto border-gray-600 text-black"
-                >
-                  EXPLORE SOLANA
-                </Button>
               </motion.div>
             </motion.div>
-
-            {/* Features */}
           </div>
 
           {/* Leaderboard */}
           <div className="flex-1 mt-12 lg:mt-0 lg:ml-12">
-            <div className="bg-gray-800 bg-opacity-50 p-6 rounded-2xl">
+            <motion.div
+              className="bg-gray-800 bg-opacity-50 p-6 rounded-2xl"
+              initial="hidden"
+              animate="visible"
+              variants={leaderboardVariants}
+            >
               <h2 className="text-2xl font-bold mb-4">Top Learners</h2>
-              <ul className="space-y-4">
+              <motion.ul className="space-y-4">
                 {[
                   { rank: "#1", name: "solana_dev_pro", xp: "1500 XP" },
                   { rank: "#2", name: "blockchain_ninja", xp: "1450 XP" },
                   { rank: "#3", name: "crypto_coder", xp: "1400 XP" },
                 ].map((user, index) => (
-                  <li
+                  <motion.li
                     key={index}
+                    variants={leaderItemVariants}
                     className="flex items-center justify-between bg-gray-900 p-4 rounded-lg"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <div className="flex items-center">
-                      <div className="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-4">
+                      <motion.div
+                        className="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-4"
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.5 }}
+                      >
                         {user.rank}
-                      </div>
+                      </motion.div>
                       <div>
                         <p className="font-medium">{user.name}</p>
                         <p className="text-sm text-gray-400">0x...{index}F6</p>
                       </div>
                     </div>
-                    <div className="text-lg font-bold">{user.xp}</div>
-                  </li>
+                    <motion.div
+                      className="text-lg font-bold"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      {user.xp}
+                    </motion.div>
+                  </motion.li>
                 ))}
-              </ul>
-            </div>
+              </motion.ul>
+            </motion.div>
           </div>
         </main>
 

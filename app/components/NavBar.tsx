@@ -1,44 +1,54 @@
-"use client";
-
+import { useRouter } from "next/navigation";
 import { Menu } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { Settings, LogOut, Star } from "lucide-react";
+import { LogOut, Star } from "lucide-react";
 import Image from "next/image";
-import { supabase } from "../utils/supabase";
-import { useRouter } from "next/navigation";
+import { useUserXp } from "../hooks/useUserXp";
 import { useEffect, useState } from "react";
+import { supabase } from "../utils/supabase";
 
-interface User {
-  user_metadata: {
+interface Identity {
+  user_id: number;
+  provider: string;
+  identity_data: {
     avatar_url?: string;
-    full_name?: string;
-    email?: string;
   };
 }
 
+interface AppUser {
+  user_metadata?: {
+    avatar_url?: string;
+    full_name?: string;
+  };
+  identities?: Identity[];
+}
+
 interface NavbarProps {
-  user?: User | null;
+  user?: AppUser | null;
 }
 
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState(user);
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(user || null);
+  console.log("Current User:", currentUser);
+
+  // Extract user_id from identities
+  const userId = currentUser?.identities?.[0]?.user_id;
+  console.log("User ID:", userId);
+
+  // Use the custom hook to get the user's XP
+  const xp = Number(useUserXp(userId || 0));
+  console.log("XP:", xp);
 
   useEffect(() => {
-    // Update currentUser whenever the user prop changes
-    setCurrentUser(user);
+    setCurrentUser(user || null);
   }, [user]);
 
   const handleSignOut = async () => {
     try {
-      // Sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-
-      // Set user state to null after sign-out
       setCurrentUser(null);
-
-      // Redirect user to the home page
       router.push("/");
     } catch (error) {
       console.error("Error signing out:", error);
@@ -54,7 +64,7 @@ export function Navbar({ user }: NavbarProps) {
         <div className="flex items-center space-x-4">
           <div className="bg-gray-800 rounded-full px-3 py-1 flex items-center">
             <Star className="h-5 w-5 text-yellow-400 mr-2" />
-            <span className="text-white font-medium">0 XP</span>
+            <span className="text-white font-medium">{xp} XP</span>
           </div>
           <Menu as="div" className="relative inline-block text-left">
             <Menu.Button className="inline-flex items-center justify-center rounded-md border border-gray-600 shadow-sm px-4 py-2 bg-gray-800 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">

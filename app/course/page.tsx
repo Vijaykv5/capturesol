@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import SignIn from "../SignIn";
 import CoursePage from "./course";
 import Landing from "../Landing";
 import useCurrentUser from "../hooks/useCurrentUser";
@@ -14,32 +13,38 @@ const Page = () => {
   useEffect(() => {
     if (!loading) {
       if (user) {
-      
         router.push("/course");
       } else {
-       
         router.push("/");
       }
     }
   }, [user, loading, router]);
 
   if (loading) {
-    return <div>
-      <LoadingPage/>
-    </div>;
+    return (
+      <div>
+        <LoadingPage />
+      </div>
+    );
   }
+
+  
+  const appUser: AppUser | null = user
+    ? {
+        ...user,
+        id: Number(user.id),
+      }
+    : null;
 
   return (
     <div>
       {user ? (
-        <CoursePage user={user} />
+        <CoursePage user={appUser} />
       ) : (
-        <Landing /> // Redirect to the landing page if no user is logged in
+        <Landing /> 
       )}
     </div>
   );
 };
 
 export default Page;
-
-

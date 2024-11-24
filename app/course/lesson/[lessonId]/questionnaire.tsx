@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +22,12 @@ export function Questionnaire({
   const [feedback, setFeedback] = useState<string[]>(
     new Array(questions.length).fill("")
   );
+
+  // Reset answers and feedback whenever the questions array changes (new lesson).
+  useEffect(() => {
+    setAnswers(new Array(questions.length).fill(""));
+    setFeedback(new Array(questions.length).fill(""));
+  }, [questions]);
 
   const handleSubmit = (index: number) => {
     const isCorrect =

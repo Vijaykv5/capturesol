@@ -22,20 +22,36 @@ export default function SignIn() {
     }
   };
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Error signing out:", error);
-    setUser(null);
-  };
-
+//creating an XP record for the user
   useEffect(() => {
     const checkUserSession = async () => {
-      router.push("/course");
       const { data } = await supabase.auth.getSession();
       if (data?.session?.user) {
-        // setUser(");
-        console.log(data.session.user);
-        
+        const currentUser = data.session.user;
+       
+
+     
+        const { data: userXpData, error } = await supabase
+          .from("user_xp")
+          .select("UUID")
+          .eq("UUID", currentUser.id);
+
+        if (error) {
+          console.error("Error checking user XP:", error);
+        } else if (userXpData.length === 0) {
+          // No entry found for this user, so create a new one
+          const { error: insertError } = await supabase
+            .from("user_xp")
+            .insert([{ UUID: currentUser.id, xp: 0 }]);
+
+          if (insertError) {
+            console.log("Error creating user XP record:", insertError);
+          } else {
+            console.log("User XP record created successfully.");
+          }
+        }
+
+        router.push("/course");
       }
     };
 
@@ -48,7 +64,7 @@ export default function SignIn() {
         onClick={handleSignIn}
         className="rounded-full px-8 py-6 text-lg w-full sm:w-auto border-gray-600 bg-purple-600 text-white"
       >
-        START CODING
+        START LEARNING
         <ArrowRight />
       </Button>
     </div>
