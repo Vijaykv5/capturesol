@@ -45,7 +45,7 @@ export default function SignIn() {
             .insert([{ UUID: currentUser.id, xp: 0 }]);
 
           if (insertError) {
-            console.log("Error creating user XP record:", insertError);
+            // console.log("Error creating user XP record:", insertError);
           } else {
             console.log("User XP record created successfully.");
           }

@@ -1,6 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Menu } from "@headlessui/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, Star } from "lucide-react";
 import Image from "next/image";
 import { useUserXp } from "../hooks/useUserXp";
@@ -30,15 +29,13 @@ interface NavbarProps {
 export function Navbar({ user }: NavbarProps) {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<AppUser | null>(user || null);
-  console.log("Current User:", currentUser);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Extract user_id from identities
   const userId = currentUser?.identities?.[0]?.user_id;
-  console.log("User ID:", userId);
 
   // Use the custom hook to get the user's XP
   const xp = Number(useUserXp(userId || 0));
-  console.log("XP:", xp);
 
   useEffect(() => {
     setCurrentUser(user || null);
@@ -49,11 +46,14 @@ export function Navbar({ user }: NavbarProps) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       setCurrentUser(null);
+      setIsMenuOpen(false);
       router.push("/");
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <header className="w-full px-8 py-4 flex justify-between items-center">
@@ -66,8 +66,13 @@ export function Navbar({ user }: NavbarProps) {
             <Star className="h-5 w-5 text-yellow-400 mr-2" />
             <span className="text-white font-medium">{xp} XP</span>
           </div>
-          <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="inline-flex items-center justify-center rounded-md border border-gray-600 shadow-sm px-4 py-2 bg-gray-800 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+          <div className="relative">
+            <button
+              onClick={toggleMenu}
+              className="inline-flex items-center justify-center rounded-md border border-gray-600 shadow-sm px-4 py-2 bg-gray-800 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+              aria-haspopup="true"
+              aria-expanded={isMenuOpen}
+            >
               {currentUser?.user_metadata?.avatar_url && (
                 <Image
                   src={currentUser.user_metadata.avatar_url}
@@ -78,38 +83,35 @@ export function Navbar({ user }: NavbarProps) {
                 />
               )}
               <span>{currentUser?.user_metadata?.full_name || "User"}</span>
-            </Menu.Button>
+            </button>
 
-            <Menu.Items
-              as={motion.div}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-            >
-              <div className="py-1">
-                <div className="px-4 py-2 text-sm text-gray-700">
-                  👋 Hey,{" "}
-                  {currentUser?.user_metadata?.full_name?.split(" ")[0] ||
-                    "User"}
-                </div>
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                >
+                  <div className="py-1">
+                    <div className="px-4 py-2 text-sm text-gray-700">
+                      👋 Hey,{" "}
+                      {currentUser?.user_metadata?.full_name?.split(" ")[0] ||
+                        "User"}
+                    </div>
 
-                <Menu.Item>
-                  {({ active }) => (
                     <button
                       onClick={handleSignOut}
-                      className={`${
-                        active ? "bg-gray-100 text-gray-900" : "text-red-600"
-                      } flex w-full px-4 py-2 text-sm`}
+                      className="flex w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:text-gray-900"
                     >
                       <LogOut className="mr-3 h-5 w-5" aria-hidden="true" />
                       Sign Out
                     </button>
-                  )}
-                </Menu.Item>
-              </div>
-            </Menu.Items>
-          </Menu>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       ) : (
         <></>

@@ -20,7 +20,7 @@ export function useUserXp(userId:number) {
 
       if (error) throw error;
       if (data) setXp(data.xp);
-      console.log("Fetched XP:", data.xp);
+      
     } catch (error) {
       console.log("Error fetching XP:", error);
     }
