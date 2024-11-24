@@ -1,4 +1,6 @@
-import { defineConfig } from "next";
+import next from "next";
+
+const { defineConfig } = next;
 
 const nextConfig = defineConfig({
   images: {
